@@ -34,3 +34,9 @@ class TestBooksCollector:
     # Несуществующая книга возвращает None
     def test_get_book_genre_nonexistent_book_returns_none(self, collector_with_books):
         assert collector_with_books.get_book_genre('Несуществующая книга') is None
+
+    # Посчет количества книг определенного жанра
+    @pytest.mark.parametrize('target_genre, expected_count', [('Фантастика', 2), ('Ужасы', 1), ('Комедии', 1), ('Мультфильмы', 0)])
+    def test_get_books_with_specific_genre_valid_genre_returns_books(self, collector_with_books, target_genre, expected_count):
+        result = collector_with_books.get_books_with_specific_genre(target_genre)
+        assert len(result) == expected_count
