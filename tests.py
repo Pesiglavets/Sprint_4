@@ -56,3 +56,9 @@ class TestBooksCollector:
             assert book_name in children_books
         else:
             assert book_name not in children_books
+
+    # Добавление в избранное существующих книг
+    @pytest.mark.parametrize('book_name', ['Фантастика 1', 'Комедия 1'])
+    def test_add_book_in_favorites_existing_book_added_to_favorites(self, collector_with_books, book_name):
+        collector_with_books.add_book_in_favorites(book_name)
+        assert book_name in collector_with_books.get_list_of_favorites_books()
