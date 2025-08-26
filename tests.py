@@ -40,3 +40,10 @@ class TestBooksCollector:
     def test_get_books_with_specific_genre_valid_genre_returns_books(self, collector_with_books, target_genre, expected_count):
         result = collector_with_books.get_books_with_specific_genre(target_genre)
         assert len(result) == expected_count
+        
+    # Проверка словаря с книгами по жанру
+    def test_get_books_genre_valid_books_returns_all(self, collector_with_books):
+        books_genre = collector_with_books.get_books_genre()
+        assert len(books_genre) == 5
+        assert 'Фантастика 1' in books_genre
+        assert 'Ужасы 1' in books_genre
