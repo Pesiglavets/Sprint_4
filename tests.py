@@ -68,3 +68,11 @@ class TestBooksCollector:
         collector_with_favorites.delete_book_from_favorites('Фантастика 1')
         assert 'Фантастика 1' not in collector_with_favorites.get_list_of_favorites_books()
         assert 'Комедия 1' in collector_with_favorites.get_list_of_favorites_books()
+        
+    # Получение списка избранного
+    def test_get_list_of_favorites_books(self, collector_with_favorites):
+        favorites = collector_with_favorites.get_list_of_favorites_books()
+        assert len(favorites) == 2
+        assert 'Фантастика 1' in favorites
+        assert 'Комедия 1' in favorites
+        
