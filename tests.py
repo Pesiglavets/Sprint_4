@@ -30,3 +30,7 @@ class TestBooksCollector:
         collector.add_new_book('Черновик')
         collector.set_book_genre('Черновик', invalid_genre)
         assert collector.get_book_genre('Черновик') == ''
+
+    # Несуществующая книга возвращает None
+    def test_get_book_genre_nonexistent_book_returns_none(self, collector_with_books):
+        assert collector_with_books.get_book_genre('Несуществующая книга') is None
