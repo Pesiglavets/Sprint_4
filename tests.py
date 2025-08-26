@@ -16,3 +16,10 @@ class TestBooksCollector:
         collector.add_new_book('Книга 1')
 
         assert len(collector.get_books_genre()) == 1      
+
+    # Корректный жанр
+    @pytest.mark.parametrize('genre', ['Фантастика', 'Ужасы', 'Детективы', 'Мультфильмы', 'Комедии'])
+    def test_set_book_genre_valid_genre_not_set(self, collector, genre):
+        collector.add_new_book('Черновик')
+        collector.set_book_genre('Черновик', genre)
+        assert collector.get_book_genre('Черновик') == genre
