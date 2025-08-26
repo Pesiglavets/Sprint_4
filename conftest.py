@@ -18,3 +18,11 @@ def collector_with_books(collector):
             collector.set_book_genre(name, genre)
 
     return collector
+
+# Фикстура с книгами в избранном
+@pytest.fixture
+def collector_with_favorites(collector_with_books):
+    collector = collector_with_books
+    collector.add_book_in_favorites('Фантастика 1')
+    collector.add_book_in_favorites('Комедия 1')
+    return collector

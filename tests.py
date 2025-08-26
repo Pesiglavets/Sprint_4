@@ -62,3 +62,9 @@ class TestBooksCollector:
     def test_add_book_in_favorites_existing_book_added_to_favorites(self, collector_with_books, book_name):
         collector_with_books.add_book_in_favorites(book_name)
         assert book_name in collector_with_books.get_list_of_favorites_books()
+        
+    # Удаление из избранного существющей книги
+    def test_delete_book_from_favorites_existing_book_removed(self, collector_with_favorites):
+        collector_with_favorites.delete_book_from_favorites('Фантастика 1')
+        assert 'Фантастика 1' not in collector_with_favorites.get_list_of_favorites_books()
+        assert 'Комедия 1' in collector_with_favorites.get_list_of_favorites_books()
