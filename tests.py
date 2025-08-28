@@ -1,24 +1,75 @@
+import pytest
 from main import BooksCollector
 
-# класс TestBooksCollector объединяет набор тестов, которыми мы покрываем наше приложение BooksCollector
-# обязательно указывать префикс Test
 class TestBooksCollector:
 
-    # пример теста:
-    # обязательно указывать префикс test_
-    # дальше идет название метода, который тестируем add_new_book_
-    # затем, что тестируем add_two_books - добавление двух книг
-    def test_add_new_book_add_two_books(self):
-        # создаем экземпляр (объект) класса BooksCollector
-        collector = BooksCollector()
+    # Добавление двух книг
+    def test_add_new_book_two_books_added(self, collector):
+        collector.add_new_book('Книга 1')
+        collector.add_new_book('Книга 2')
 
-        # добавляем две книги
-        collector.add_new_book('Гордость и предубеждение и зомби')
-        collector.add_new_book('Что делать, если ваш кот хочет вас убить')
+        assert len(collector.get_books_genre()) == 2
+        
+    # Добавление дубликата книги
+    def test_add_new_book_duplicate_name_not_added(self, collector):
+        collector.add_new_book('Книга 1')
+        collector.add_new_book('Книга 1')
 
-        # проверяем, что добавилось именно две
-        # словарь books_rating, который нам возвращает метод get_books_rating, имеет длину 2
-        assert len(collector.get_books_rating()) == 2
+        assert len(collector.get_books_genre()) == 1      
 
-    # напиши свои тесты ниже
-    # чтобы тесты были независимыми в каждом из них создавай отдельный экземпляр класса BooksCollector()
+    # Корректный жанр
+    @pytest.mark.parametrize('genre', ['Фантастика', 'Ужасы', 'Детективы', 'Мультфильмы', 'Комедии'])
+    def test_set_book_genre_valid_genre_not_set(self, collector, genre):
+        collector.add_new_book('Черновик')
+        collector.set_book_genre('Черновик', genre)
+        assert collector.get_book_genre('Черновик') == genre
+
+    # Некорректный жанр
+    @pytest.mark.parametrize('invalid_genre', ['Боевик', 'Исекай', 'Наука', ''])
+    def test_set_book_genre_invalid_genre_not_set(self, collector, invalid_genre):
+        collector.add_new_book('Черновик')
+        collector.set_book_genre('Черновик', invalid_genre)
+        assert collector.get_book_genre('Черновик') == ''
+
+    # Несуществующая книга возвращает None
+    def test_get_book_genre_nonexistent_book_returns_none(self, collector_with_books):
+        assert collector_with_books.get_book_genre('Несуществующая книга') is None
+
+    # Посчет количества книг определенного жанра
+    @pytest.mark.parametrize('target_genre, expected_count', [('Фантастика', 2), ('Ужасы', 1), ('Комедии', 1), ('Мультфильмы', 0)])
+    def test_get_books_with_specific_genre_valid_genre_returns_books(self, collector_with_books, target_genre, expected_count):
+        result = collector_with_books.get_books_with_specific_genre(target_genre)
+        assert len(result) == expected_count
+        
+    # Проверка словаря с книгами по жанру
+    def test_get_books_genre_valid_books_returns_all(self, collector_with_books):
+        books_genre = collector_with_books.get_books_genre()
+        assert len(books_genre) == 5
+        assert 'Фантастика 1' in books_genre
+        assert 'Ужасы 1' in books_genre
+        
+    # Проверка книг подходящих детям
+    @pytest.mark.parametrize('book_name, expected_in_children', [('Фантастика 1', True), ('Ужасы 1', False), ('Комедия 1', True), ('Книга без жанра', False)])
+    def test_get_books_for_children_various_genres_filtered(self, collector_with_books, book_name, expected_in_children):
+        children_books = collector_with_books.get_books_for_children()
+        assert (book_name in children_books) == expected_in_children
+
+    # Добавление в избранное существующих книг
+    @pytest.mark.parametrize('book_name', ['Фантастика 1', 'Комедия 1'])
+    def test_add_book_in_favorites_existing_book_added_to_favorites(self, collector_with_books, book_name):
+        collector_with_books.add_book_in_favorites(book_name)
+        assert book_name in collector_with_books.get_list_of_favorites_books()
+        
+    # Удаление из избранного существющей книги
+    def test_delete_book_from_favorites_existing_book_removed(self, collector_with_favorites):
+        collector_with_favorites.delete_book_from_favorites('Фантастика 1')
+        assert 'Фантастика 1' not in collector_with_favorites.get_list_of_favorites_books()
+        assert 'Комедия 1' in collector_with_favorites.get_list_of_favorites_books()
+        
+    # Получение списка избранного
+    def test_get_list_of_favorites_books(self, collector_with_favorites):
+        favorites = collector_with_favorites.get_list_of_favorites_books()
+        assert len(favorites) == 2
+        assert 'Фантастика 1' in favorites
+        assert 'Комедия 1' in favorites
+        
