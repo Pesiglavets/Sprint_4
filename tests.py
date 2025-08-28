@@ -52,10 +52,7 @@ class TestBooksCollector:
     @pytest.mark.parametrize('book_name, expected_in_children', [('Фантастика 1', True), ('Ужасы 1', False), ('Комедия 1', True), ('Книга без жанра', False)])
     def test_get_books_for_children_various_genres_filtered(self, collector_with_books, book_name, expected_in_children):
         children_books = collector_with_books.get_books_for_children()
-        if expected_in_children:
-            assert book_name in children_books
-        else:
-            assert book_name not in children_books
+        assert (book_name in children_books) == expected_in_children
 
     # Добавление в избранное существующих книг
     @pytest.mark.parametrize('book_name', ['Фантастика 1', 'Комедия 1'])
